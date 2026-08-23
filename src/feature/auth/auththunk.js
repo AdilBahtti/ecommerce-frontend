@@ -1,16 +1,15 @@
-import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import api from '../../api/apiClient';
 
-
-const API_URL = 'http://localhost:5000/';
+const errorPayload = (error) => error.response?.data || { message: error.message };
 
 const registerUser = createAsyncThunk(
   'auth/registerUser',
-  async (userData, { rejectWithValue }) => {  
-    const { name, email, password , phone , address } = userData;
+  async (userData, { rejectWithValue }) => {
+    const { name, email, password, phone, address } = userData;
 
     try {
-      const response = await axios.post(`${API_URL}auth/signup`, {
+      const response = await api.post('/auth/signup', {
         name,
         email,
         password,
@@ -19,7 +18,7 @@ const registerUser = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(errorPayload(error));
     }
   }
 );
@@ -29,13 +28,13 @@ const loginUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     const { email, password } = userData;
     try {
-      const response = await axios.post(`${API_URL}auth/login`, {
+      const response = await api.post('/auth/login', {
         email,
         password
       });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(errorPayload(error));
     }
   }
 );

@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
 import styles from './ProductCard.module.css';
-const API_BASE = 'http://localhost:5000';
+import { mediaUrl } from '../api/apiClient';
 
 export default function ProductCard({ product }) {
   const { _id, title, price, image } = product;
-  const imageUrl = image?.[0] ? `${API_BASE}/${image[0]}` : '/placeholder.png';
+  const imageUrl = image?.[0] ? mediaUrl(image[0]) : '/placeholder.png';
 
   return (
     <Link to={`/layout/shop/${_id}`} className={styles.card}>

@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import styles from './ProductGallery.module.css';
-
-const API_BASE = 'http://localhost:5000';
+import { mediaUrl } from '../api/apiClient';
 
 export default function ProductGallery({ images, title }) {
   const [activeImage, setActiveImage] = useState(0);
       
-  const imageUrls = images.map((img) => `${API_BASE}/${img}`);
+  const imageUrls = images.map((img) => mediaUrl(img));
 
   return (
     <div className={styles.wrap}>

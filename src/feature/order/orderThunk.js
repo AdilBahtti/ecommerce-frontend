@@ -1,50 +1,42 @@
-import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-  const API_URL = 'http://localhost:5000/orders';
-const getTokenConfig = () => {
-  const token = localStorage.getItem('token');
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  };
-  return config;
-};
+import api from '../../api/apiClient';
+
+const errorPayload = (error) => error.response?.data || { message: error.message };
 
 const placeOrder = createAsyncThunk('order/placeOrder', async (orderData, { rejectWithValue }) => {
   try {
-    const response = await axios.post(`${API_URL}/place`, orderData, getTokenConfig());
+    const response = await api.post('/orders/place', orderData);
     return response.data;
   } catch (error) {
-    return rejectWithValue(error.response.data);
+    return rejectWithValue(errorPayload(error));
   }
 });
 
 const getAllOrders = createAsyncThunk('order/getAllOrders', async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get(`${API_URL}/`, getTokenConfig());
+    const response = await api.get('/orders/');
     return response.data;
   } catch (error) {
-    return rejectWithValue(error.response.data);
+    return rejectWithValue(errorPayload(error));
   }
 });
 
 const getOrderById = createAsyncThunk('order/getOrderById', async (id, { rejectWithValue }) => {
   try {
-    const response = await axios.get(`${API_URL}/${id}`, getTokenConfig());
+    const response = await api.get(`/orders/${id}`);
     return response.data;
   } catch (error) {
-    return rejectWithValue(error.response.data);
+    return rejectWithValue(errorPayload(error));
   }
 });
- 
+
 const updateOrderStatus = createAsyncThunk('order/updateOrderStatus', async ({ id, status }, { rejectWithValue }) => {
   try {
-    const response = await axios.put(`${API_URL}/${id}/status`, { status }, getTokenConfig());
+    const response = await api.put(`/orders/${id}/status`, { status });
     return response.data;
   } catch (error) {
-    return rejectWithValue(error.response.data);
+    return rejectWithValue(errorPayload(error));
   }
 });
- 
+
 export { placeOrder, getAllOrders, getOrderById, updateOrderStatus };

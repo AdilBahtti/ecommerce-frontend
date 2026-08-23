@@ -1,89 +1,78 @@
-import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import api from '../../api/apiClient';
 
-const getTokenConfig = (isFormData = false) => {
-  const token = localStorage.getItem('token');
-  return {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
-    },
-  };
-};
-
-
-const API_URL = 'http://localhost:5000/products';
+const errorPayload = (error) => error.response?.data || { message: error.message };
 
 const addProduct = createAsyncThunk('product/addProduct', async (productData, { rejectWithValue }) => {
   try {
-    const response = await axios.post(`${API_URL}/add`, productData, getTokenConfig(true));
+    const response = await api.post('/products/add', productData);
     return response.data;
   } catch (error) {
-    return rejectWithValue(error.response.data);
-  }});
-
+    return rejectWithValue(errorPayload(error));
+  }
+});
 
 const updateProduct = createAsyncThunk('product/updateProduct', async ({ id, productData }, { rejectWithValue }) => {
   try {
-    const response = await axios.put(`${API_URL}/update/${id}`, productData, getTokenConfig(true));
+    const response = await api.put(`/products/update/${id}`, productData);
     return response.data;
   } catch (error) {
-    return rejectWithValue(error.response.data);
+    return rejectWithValue(errorPayload(error));
   }
 });
 
 const deleteProduct = createAsyncThunk('product/deleteProduct', async (id, { rejectWithValue }) => {
   try {
-    const response = await axios.delete(`${API_URL}/delete/${id}`, getTokenConfig());
+    const response = await api.delete(`/products/delete/${id}`);
     return response.data;
   } catch (error) {
-    return rejectWithValue(error.response.data);
-  }});
-
-  const getAllProducts = createAsyncThunk('product/getAllProducts', async (_, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`${API_URL}/all`, getTokenConfig());
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  });
-
-  const getProductById = createAsyncThunk('product/getProductById', async (id, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`${API_URL}/${id}`, getTokenConfig());
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  });
-
-  const addReview = createAsyncThunk('product/addReview', async ({ id, reviewData }, { rejectWithValue }) => {
-    try {
-      const response = await axios.post(`${API_URL}/review/${id}`, reviewData, getTokenConfig()); 
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  });
-
-  const getFilterProducts = createAsyncThunk('product/getFilterProducts', async (filterParams, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`${API_URL}/filter`, { params: filterParams });
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  });
-  const productPagination = createAsyncThunk('product/productPagination', async (paginationParams, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`${API_URL}/pagination`, { params: paginationParams });
-      return response.data;
-    }
-
-  catch (error) {     
-  return rejectWithValue(error.response.data);
+    return rejectWithValue(errorPayload(error));
   }
 });
 
-  export { getFilterProducts, addProduct, updateProduct, deleteProduct, getAllProducts, getProductById, addReview, productPagination };
+const getAllProducts = createAsyncThunk('product/getAllProducts', async (_, { rejectWithValue }) => {
+  try {
+    const response = await api.get('/products/all');
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(errorPayload(error));
+  }
+});
+
+const getProductById = createAsyncThunk('product/getProductById', async (id, { rejectWithValue }) => {
+  try {
+    const response = await api.get(`/products/${id}`);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(errorPayload(error));
+  }
+});
+
+const addReview = createAsyncThunk('product/addReview', async ({ id, reviewData }, { rejectWithValue }) => {
+  try {
+    const response = await api.post(`/products/review/${id}`, reviewData);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(errorPayload(error));
+  }
+});
+
+const getFilterProducts = createAsyncThunk('product/getFilterProducts', async (filterParams, { rejectWithValue }) => {
+  try {
+    const response = await api.get('/products/filter', { params: filterParams });
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(errorPayload(error));
+  }
+});
+
+const productPagination = createAsyncThunk('product/productPagination', async (paginationParams, { rejectWithValue }) => {
+  try {
+    const response = await api.get('/products/pagination', { params: paginationParams });
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(errorPayload(error));
+  }
+});
+
+export { getFilterProducts, addProduct, updateProduct, deleteProduct, getAllProducts, getProductById, addReview, productPagination };

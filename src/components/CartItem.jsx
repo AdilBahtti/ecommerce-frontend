@@ -1,12 +1,11 @@
 import styles from './CartItem.module.css';
+import { mediaUrl } from '../api/apiClient';
 
 export default function CartItem({ item, onIncrease, onRemove }) {
- const ApiBase = 'http://localhost:5000';
-      console.log('CartItem props:', item); // Log the item prop to check its structure
   return (
     <div className={styles.row}>
       <div className={styles.imageWrap}>
-        <img src={`${ApiBase}/${item.product.image}`} alt={item.product.title} className={styles.image} />
+        <img src={mediaUrl(item.product.image?.[0] ?? item.product.image)} alt={item.product.title} className={styles.image} />
       </div>
 
       <div className={styles.info}>

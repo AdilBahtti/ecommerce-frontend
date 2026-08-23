@@ -1,53 +1,40 @@
-import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import api from '../../api/apiClient';
 
-const getTokenConfig = (isFormData = false) => {
-  const token = localStorage.getItem('token');
-  return {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
-    },
-  };
-}
-
-
-
-const API_URL = 'http://localhost:5000/categories';
+const errorPayload = (error) => error.response?.data || { message: error.message };
 
 export const addCategory = createAsyncThunk('category/addCategory', async (categoryData, { rejectWithValue }) => {
   try {
-    const response = await axios.post(`${API_URL}/`, categoryData, getTokenConfig(true));
+    const response = await api.post('/categories/', categoryData);
     return response.data;
+  } catch (error) {
+    return rejectWithValue(errorPayload(error));
   }
-  catch (error) {
-    return rejectWithValue(error.response.data);
-  } 
 });
 
 export const updateCategory = createAsyncThunk('category/updateCategory', async ({ id, categoryData }, { rejectWithValue }) => {
   try {
-    const response = await axios.put(`${API_URL}/${id}`, categoryData, getTokenConfig());
+    const response = await api.put(`/categories/${id}`, categoryData);
     return response.data;
   } catch (error) {
-    return rejectWithValue(error.response.data);
+    return rejectWithValue(errorPayload(error));
   }
 });
 
 export const deleteCategory = createAsyncThunk('category/deleteCategory', async (id, { rejectWithValue }) => {
   try {
-    const response = await axios.delete(`${API_URL}/${id}`, getTokenConfig());
+    const response = await api.delete(`/categories/${id}`);
     return response.data;
   } catch (error) {
-    return rejectWithValue(error.response.data);
+    return rejectWithValue(errorPayload(error));
   }
 });
 
 export const getAllCategories = createAsyncThunk('category/getAllCategories', async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get(`${API_URL}/`, getTokenConfig());
+    const response = await api.get('/categories/');
     return response.data;
   } catch (error) {
-    return rejectWithValue(error.response.data);
+    return rejectWithValue(errorPayload(error));
   }
 });
